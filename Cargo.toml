@@ -1,0 +1,9 @@
+[package]
+name = "edict_sync"
+version = "0.1.0"
+authors = ["Brian Birtles <birtles@gmail.com>"]
+
+[dependencies]
+curl = "0.4"
+tokio-core = "0.1"
+tokio-curl = "0.1"
