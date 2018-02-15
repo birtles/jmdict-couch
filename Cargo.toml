@@ -1,5 +1,5 @@
 [package]
-name = "edict_sync"
+name = "jmdict_couch"
 version = "0.1.0"
 authors = ["Brian Birtles <birtles@gmail.com>"]
 
