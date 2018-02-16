@@ -1,9 +1,8 @@
 [package]
-name = "jmdict_couch"
+name = "jmdict-couch"
 version = "0.1.0"
 authors = ["Brian Birtles <birtles@gmail.com>"]
 
 [dependencies]
-curl = "0.4"
-tokio-core = "0.1"
-tokio-curl = "0.1"
+structopt = "0.2.2"
+quick-xml = "0.11.0"
