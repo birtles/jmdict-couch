@@ -1,11 +1,12 @@
 #[macro_use]
 extern crate structopt;
-extern crate quick_xml;
+extern crate xml;
 
+use std::fs::File;
+use std::io::BufReader;
 use std::path::PathBuf;
 use structopt::StructOpt;
-use quick_xml::reader::Reader;
-use quick_xml::events::Event;
+use xml::reader::{EventReader, ParserConfig, XmlEvent};
 
 #[derive(StructOpt)]
 #[structopt(name = "jmdict-couch")]
@@ -21,37 +22,38 @@ fn main() {
 
     // TODO: Support reading from stdin?
 
-    let mut reader = Reader::from_file(opt.input).expect("Could not read from file");
-    reader.trim_text(true);
-    reader.check_end_names(false);
+    let file = File::open(opt.input).expect("Could not read from file");
+    let file = BufReader::new(file);
 
-    let mut txt = Vec::new();
-    let mut buf = Vec::new();
+    let mut in_entry = false;
 
-    // TODO: This is currently getting caught up on the entity references. We could:
-    // - Pre-parse the input using xmllint to expand the entity references
-    // - Parse just the element text ourselves and escape them (could be really hard?)
-    // - Try to parse all the elements in the DOCTYPE and actually do the substitution (super hard!)
-
-    loop {
-        match reader.read_event(&mut buf) {
-            Ok(Event::Start(ref e)) => {
-                match e.name() {
-                    b"entry" => println!("entry"),
-                    _ => (),
+    let parser = EventReader::new_with_config(file,
+                                              ParserConfig::new()
+                                              .ignore_comments(false)
+                                              .whitespace_to_characters(true)
+                                              .trim_whitespace(true));
+    for e in parser {
+        match e {
+            Ok(XmlEvent::StartElement { name, .. }) => {
+                if name.local_name == "entry" {
+                    assert!(!in_entry, "Entries should not be nested");
+                    in_entry = true;
+                    println!("{}", name);
                 }
-            },
-            Ok(Event::Text(e)) => txt.push(e.unescape_and_decode(&reader).unwrap()),
-            Ok(Event::Eof) => break,
-            Err(e) => panic!("Error at position {}: {:?}", reader.buffer_position(), e),
-            _ => (),
+            }
+            Ok(XmlEvent::EndElement { name }) => {
+                if name.local_name == "entry" {
+                    assert!(in_entry, "Entry tag mismatch");
+                    in_entry = false;
+                }
+            }
+            Ok(XmlEvent::Characters(text)) => {
+                println!("# {}", text);
+            }
+            Err(e) => {
+                println!("Error: {}", e);
+            }
+            _ => {}
         }
-
-        // If we don't keep a borrow elsewhere, we can clear the buffer to keep memory usage low
-        buf.clear();
-    }
-
-    for line in txt {
-        println!("> {}", line);
     }
 }
