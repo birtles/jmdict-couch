@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate structopt;
 extern crate quick_xml;
-// extern crate smallvec;
+extern crate smallvec;
 
 // TODO
 // -- The error handling here is embarassing
@@ -13,8 +13,7 @@ extern crate quick_xml;
 // -- Now that this is starting to come together, work out how better to factor out common code.
 //    Macros? Mako?
 
-// TODO: Add this to Cargo.toml (and extern crate)
-// use smallvec::SmallVec;
+use smallvec::SmallVec;
 use std::path::PathBuf;
 use std::str::FromStr;
 use structopt::StructOpt;
@@ -29,6 +28,9 @@ struct Opt {
     #[structopt(short = "i", long = "input", help = "Input file", parse(from_os_str))]
     input: PathBuf,
 }
+
+type InfoVec = SmallVec<[String; 4]>;
+type PriorityVec = SmallVec<[String; 4]>;
 
 /// entry from jmdict schema
 #[derive(Debug)]
@@ -47,10 +49,9 @@ struct KanjiEntry {
     /// keb
     kanji: String,
     /// ke_inf
-    // TODO Use SmallVec below
-    info: Vec<String>,
+    info: InfoVec,
     /// ke_pri
-    priority: Vec<String>,
+    priority: PriorityVec,
 }
 
 /// r_ele from jmdict schema
@@ -63,9 +64,9 @@ struct ReadingEntry {
     /// re_restr
     related_kanji: Vec<String>,
     /// re_inf
-    info: Vec<String>,
+    info: InfoVec,
     /// re_pri
-    priority: Vec<String>,
+    priority: PriorityVec,
 }
 
 fn main() {
@@ -74,6 +75,7 @@ fn main() {
     let mut reader = Reader::from_file(opt.input).expect("Could not read from file");
     reader.trim_text(true);
     reader.check_end_names(false);
+    reader.expand_empty_elements(true);
 
     let mut buf = Vec::new();
     let mut entries: Vec<Entry> = Vec::new();
@@ -153,8 +155,8 @@ fn parse_entry<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Entry, ()>
 
 fn parse_k_ele<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<KanjiEntry, ()> {
     let mut kanji: String = String::new();
-    let mut info: Vec<String> = Vec::new();
-    let mut priority: Vec<String> = Vec::new();
+    let mut info: InfoVec = InfoVec::new();
+    let mut priority: PriorityVec = PriorityVec::new();
 
     enum Elem {
         Keb,
@@ -203,8 +205,8 @@ fn parse_r_ele<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<ReadingEnt
     let mut kana = String::new();
     let mut no_kanji = false;
     let mut related_kanji: Vec<String> = Vec::new();
-    let mut info: Vec<String> = Vec::new();
-    let mut priority: Vec<String> = Vec::new();
+    let mut info: InfoVec = InfoVec::new();
+    let mut priority: PriorityVec = PriorityVec::new();
 
     enum Elem {
         Reb,
@@ -220,7 +222,6 @@ fn parse_r_ele<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<ReadingEnt
             Ok(Event::Start(ref e)) => {
                 match e.name() {
                     b"reb" => elem = Some(Elem::Reb),
-                    // TODO: I have no idea what these elements actually look like
                     b"re_nokanji" => no_kanji = true,
                     b"re_restr" => elem = Some(Elem::ReRestr),
                     b"re_inf" => elem = Some(Elem::ReInf),

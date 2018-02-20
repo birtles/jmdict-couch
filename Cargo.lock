@@ -95,6 +95,7 @@ name = "jmdict-couch"
 version = "0.1.0"
 dependencies = [
  "quick-xml 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "smallvec 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "structopt 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -158,6 +159,11 @@ dependencies = [
 [[package]]
 name = "rustc-demangle"
 version = "0.1.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "smallvec"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
@@ -299,6 +305,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum redox_syscall 0.1.37 (registry+https://github.com/rust-lang/crates.io-index)" = "0d92eecebad22b767915e4d529f89f28ee96dbbf5a4810d2b844373f136417fd"
 "checksum redox_termios 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "7e891cfe48e9100a70a3b6eb652fef28920c117d366339687bd5576160db0f76"
 "checksum rustc-demangle 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "f312457f8a4fa31d3581a6f423a70d6c33a10b95291985df55f1ff670ec10ce8"
+"checksum smallvec 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)" = "44db0ecb22921ef790d17ae13a3f6d15784183ff5f2a01aa32098c7498d2b4b9"
 "checksum strsim 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = "bb4f380125926a99e52bc279241539c018323fab05ad6368b56f93d9369ff550"
 "checksum structopt 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "cee834a8b482a52c266c11808b0f82d61d98a46ff2cb9c59c40bcd8d036ac866"
 "checksum structopt-derive 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "050efd6063af8b1939580df3e4b83dc4e9da6f6b7f3b3bd5fa9388bbbfabc69c"
