@@ -435,6 +435,43 @@ various information fields.
 </sense>
 </entry>
 <entry>
+<ent_seq>1000110</ent_seq>
+<k_ele>
+<keb>ＣＤプレーヤー</keb>
+<ke_pri>spec1</ke_pri>
+</k_ele>
+<k_ele>
+<keb>ＣＤプレイヤー</keb>
+</k_ele>
+<r_ele>
+<reb>シーディープレーヤー</reb>
+<re_restr>ＣＤプレーヤー</re_restr>
+<re_pri>spec1</re_pri>
+</r_ele>
+<r_ele>
+<reb>シーディープレイヤー</reb>
+<re_restr>ＣＤプレイヤー</re_restr>
+</r_ele>
+<sense>
+<pos>&n;</pos>
+<gloss>CD player</gloss>
+</sense>
+<sense>
+<gloss xml:lang="fre">lecteur CD</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">(m) CD-Spieler</gloss>
+<gloss xml:lang="ger">(m) CD-Player</gloss>
+</sense>
+<sense>
+<gloss xml:lang="rus">CD плеер</gloss>
+<gloss xml:lang="rus">проигрыватель компакт-дисков</gloss>
+</sense>
+<sense>
+<gloss xml:lang="spa">reproductor de CD (eng: CD player)</gloss>
+</sense>
+</entry>
+<entry>
 <ent_seq>1000225</ent_seq>
 <k_ele>
 <keb>明白</keb>
@@ -534,6 +571,67 @@ various information fields.
 <gloss xml:lang="spa">inútil</gloss>
 <gloss xml:lang="spa">no bueno</gloss>
 <gloss xml:lang="spa">sin esperanza</gloss>
+</sense>
+</entry>
+<entry>
+<ent_seq>1000390</ent_seq>
+<k_ele>
+<keb>あっという間に</keb>
+<ke_pri>spec1</ke_pri>
+</k_ele>
+<k_ele>
+<keb>あっと言う間に</keb>
+</k_ele>
+<k_ele>
+<keb>あっとゆう間に</keb>
+</k_ele>
+<k_ele>
+<keb>アッという間に</keb>
+</k_ele>
+<k_ele>
+<keb>アッと言う間に</keb>
+</k_ele>
+<k_ele>
+<keb>アッとゆう間に</keb>
+</k_ele>
+<r_ele>
+<reb>あっというまに</reb>
+<re_restr>あっという間に</re_restr>
+<re_restr>あっと言う間に</re_restr>
+<re_pri>spec1</re_pri>
+</r_ele>
+<r_ele>
+<reb>あっとゆうまに</reb>
+<re_restr>あっと言う間に</re_restr>
+<re_restr>あっとゆう間に</re_restr>
+</r_ele>
+<r_ele>
+<reb>アッというまに</reb>
+<re_restr>アッという間に</re_restr>
+<re_restr>アッと言う間に</re_restr>
+</r_ele>
+<r_ele>
+<reb>アッとゆうまに</reb>
+<re_restr>アッと言う間に</re_restr>
+<re_restr>アッとゆう間に</re_restr>
+</r_ele>
+<sense>
+<pos>&exp;</pos>
+<pos>&adv;</pos>
+<gloss>just like that</gloss>
+<gloss>in the twinkling of an eye</gloss>
+<gloss>in the blink of an eye</gloss>
+<gloss>in the time it takes to say "ah!"</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">im Nu</gloss>
+<gloss xml:lang="ger">im Handumdrehen</gloss>
+<gloss xml:lang="ger">in einem kurzen Augenblick</gloss>
+</sense>
+<sense>
+<gloss xml:lang="spa">tal que así (lit: en lo que se tarda en decir "Ah!")</gloss>
+<gloss xml:lang="spa">en un abrir y cerrar de ojos</gloss>
+<gloss xml:lang="spa">en un pestañeo</gloss>
 </sense>
 </entry>
 <entry>
