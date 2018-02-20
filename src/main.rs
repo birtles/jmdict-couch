@@ -3,6 +3,14 @@ extern crate structopt;
 extern crate quick_xml;
 // extern crate smallvec;
 
+// TODO
+// -- The error handling here is embarassing
+// -- The factoring is awkward (really, pass the first tag then get function to pass the rest?)
+//    How is this supposed to work?
+// -- All this could use tests
+// -- Check this actually works at scale (i.e. on the whole file)
+// -- Check the copyright for the dictionary is actually acceptable
+
 // TODO: Add this to Cargo.toml (and extern crate)
 // use smallvec::SmallVec;
 use std::path::PathBuf;
@@ -33,7 +41,7 @@ struct Entry {
 #[derive(Debug)]
 struct KanjiEntry {
     /// keb
-    word: String,
+    kanji: String,
     /// ke_inf
     // TODO Use SmallVec below
     orthography: Vec<String>,
@@ -125,7 +133,7 @@ fn parse_entry<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Entry, ()>
 }
 
 fn parse_k_ele<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<KanjiEntry, ()> {
-    let mut word: String = String::new();
+    let mut kanji: String = String::new();
     let mut orthography: Vec<String> = Vec::new();
     let mut priority: Vec<String> = Vec::new();
 
@@ -155,7 +163,7 @@ fn parse_k_ele<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<KanjiEntry
             },
             Ok(Event::Text(e)) => {
                 match elem {
-                    Some(Elem::Keb) => word = e.unescape_and_decode(&reader).unwrap(),
+                    Some(Elem::Keb) => kanji = e.unescape_and_decode(&reader).unwrap(),
                     Some(Elem::KeInf) => orthography.push(e.unescape_and_decode(&reader).unwrap()),
                     Some(Elem::KePri) => priority.push(e.unescape_and_decode(&reader).unwrap()),
                     _ => return Err(()),
@@ -167,5 +175,5 @@ fn parse_k_ele<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<KanjiEntry
         buf.clear();
     }
 
-    Ok(KanjiEntry { word, orthography, priority })
+    Ok(KanjiEntry { kanji, orthography, priority })
 }
