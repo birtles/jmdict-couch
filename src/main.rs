@@ -8,8 +8,6 @@ extern crate smallvec;
 // -- The factoring is awkward (really, pass the first tag then get function to pass the rest?)
 //    How is this supposed to work?
 // -- All this could use tests
-// -- Check this actually works at scale (i.e. on the whole file)
-// -- Check the copyright for the dictionary is actually acceptable
 // -- Now that this is starting to come together, work out how better to factor out common code.
 //    Macros? Mako?
 
@@ -84,7 +82,6 @@ fn main() {
         match reader.read_event(&mut buf) {
             Ok(Event::Start(ref e)) => {
                 match e.name() {
-                    // TODO: Work out if the b here is necessary
                     b"entry" => {
                         entries.push(parse_entry(&mut reader).expect("Failed to parse entry"));
                     },
@@ -145,8 +142,7 @@ fn parse_entry<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Entry, ()>
         buf.clear();
     }
 
-    // TODO: Is there a shorthand for checking if an array is empty?
-    if id == 0 || reading_entries.len() == 0 {
+    if id == 0 || reading_entries.is_empty() {
         return Err(())
     }
 
