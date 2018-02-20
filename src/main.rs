@@ -6,6 +6,7 @@ extern crate quick_xml;
 // TODO: Add this to Cargo.toml (and extern crate)
 // use smallvec::SmallVec;
 use std::path::PathBuf;
+use std::str::FromStr;
 use structopt::StructOpt;
 use quick_xml::reader::Reader;
 use quick_xml::events::Event;
@@ -17,6 +18,15 @@ use quick_xml::events::Event;
 struct Opt {
     #[structopt(short = "i", long = "input", help = "Input file", parse(from_os_str))]
     input: PathBuf,
+}
+
+/// entry from jmdict schema
+#[derive(Debug)]
+struct Entry {
+    /// ent_seq
+    id: u32,
+    /// k_ele children
+    kanji_entries: Vec<KanjiEntry>,
 }
 
 /// k_ele from jmdict schema
@@ -41,14 +51,14 @@ fn main() {
     reader.check_end_names(false);
 
     let mut buf = Vec::new();
-    let mut kanji_entries = Vec::<KanjiEntry>::new();
+    let mut entries: Vec<Entry> = Vec::new();
 
     loop {
         match reader.read_event(&mut buf) {
             Ok(Event::Start(ref e)) => {
                 match e.name() {
-                    b"k_ele" => {
-                        kanji_entries.push(parse_k_ele(&mut reader).expect("Failed to parse kanji entry"));
+                    b"entry" => {
+                        entries.push(parse_entry(&mut reader).expect("Failed to parse entry"));
                     },
                     _ => (),
                 }
@@ -62,9 +72,56 @@ fn main() {
         buf.clear();
     }
 
-    for kanji in kanji_entries {
-        println!("> {:?}", kanji);
+    for entry in entries {
+        println!("> {:?}", entry);
     }
+}
+
+fn parse_entry<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Entry, ()> {
+    let mut id: u32 = 0;
+    let mut kanji_entries: Vec<KanjiEntry> = Vec::new();
+
+    let mut buf = Vec::new();
+    let mut ent_seq = false;
+
+    loop {
+        match reader.read_event(&mut buf) {
+            Ok(Event::Start(ref e)) => {
+                match e.name() {
+                    b"k_ele" => kanji_entries.push(parse_k_ele(reader)?),
+                    b"ent_seq" => {
+                        assert!(!ent_seq);
+                        ent_seq = true;
+                    },
+                    _ => (),
+                }
+            },
+            Ok(Event::End(ref e)) => {
+                match e.name() {
+                    b"entry" => break,
+                    b"ent_seq" => {
+                        assert!(ent_seq);
+                        ent_seq = false;
+                    }
+                    _ => (),
+                }
+            },
+            Ok(Event::Text(e)) => {
+                if ent_seq {
+                    id = u32::from_str(&e.unescape_and_decode(&reader).unwrap()).unwrap();
+                }
+            },
+            Err(_) => return Err(()),
+            _ => (),
+        }
+        buf.clear();
+    }
+
+    if id == 0 {
+        return Err(())
+    }
+
+    Ok(Entry { id, kanji_entries })
 }
 
 fn parse_k_ele<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<KanjiEntry, ()> {
