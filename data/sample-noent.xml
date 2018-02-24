@@ -751,6 +751,279 @@ various information fields.
 </sense>
 </entry>
 <entry>
+<ent_seq>1176390</ent_seq>
+<k_ele>
+<keb>延べる</keb>
+</k_ele>
+<k_ele>
+<keb>伸べる</keb>
+</k_ele>
+<k_ele>
+<keb>展べる</keb>
+</k_ele>
+<r_ele>
+<reb>のべる</reb>
+</r_ele>
+<sense>
+<pos>Ichidan verb</pos>
+<pos>transitive verb</pos>
+<gloss>to lay out (a futon)</gloss>
+<gloss>to make (bed)</gloss>
+<gloss>to spread out</gloss>
+<gloss>to stretch</gloss>
+<gloss>to widen</gloss>
+</sense>
+<sense>
+<stagk>延べる</stagk>
+<stagk>伸べる</stagk>
+<gloss>to postpone</gloss>
+<gloss>to extend</gloss>
+</sense>
+<sense>
+<gloss xml:lang="dut">{手を} uitstrekken</gloss>
+<gloss xml:lang="dut">uitsteken</gloss>
+<gloss xml:lang="dut">aanreiken</gloss>
+<gloss xml:lang="dut">toesteken</gloss>
+<gloss xml:lang="dut">aanbieden</gloss>
+<gloss xml:lang="dut">verlenen</gloss>
+</sense>
+<sense>
+<gloss xml:lang="dut">{床を} spreiden</gloss>
+<gloss xml:lang="dut">uitspreiden</gloss>
+<gloss xml:lang="dut">leggen</gloss>
+</sense>
+<sense>
+<gloss xml:lang="fre">allonger</gloss>
+<gloss xml:lang="fre">différer</gloss>
+<gloss xml:lang="fre">faire (son lit)</gloss>
+<gloss xml:lang="fre">repousser</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">ausdehnen</gloss>
+<gloss xml:lang="ger">ausstrecken</gloss>
+<gloss xml:lang="ger">verlängern</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">verschieben</gloss>
+<gloss xml:lang="ger">aufschieben</gloss>
+<gloss xml:lang="ger">verzögern</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">ausbreiten</gloss>
+<gloss xml:lang="ger">auslegen</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">machen  (das Bett)</gloss>
+</sense>
+<sense>
+<gloss xml:lang="hun">elér</gloss>
+<gloss xml:lang="hun">gyárt</gloss>
+<gloss xml:lang="hun">késztet</gloss>
+<gloss xml:lang="hun">lesz</gloss>
+<gloss xml:lang="hun">teremt</gloss>
+<gloss xml:lang="hun">erőszakol</gloss>
+<gloss xml:lang="hun">felakaszt</gloss>
+<gloss xml:lang="hun">felravataloz</gloss>
+<gloss xml:lang="hun">kiegyenesít</gloss>
+<gloss xml:lang="hun">kifeszít</gloss>
+<gloss xml:lang="hun">kinyújt</gloss>
+<gloss xml:lang="hun">kitágít</gloss>
+<gloss xml:lang="hun">kiterít</gloss>
+<gloss xml:lang="hun">kiterjed</gloss>
+<gloss xml:lang="hun">megfeszül</gloss>
+<gloss xml:lang="hun">nyújtózik</gloss>
+<gloss xml:lang="hun">nyúlik</gloss>
+<gloss xml:lang="hun">túlerőltet</gloss>
+<gloss xml:lang="hun">túlfeszít</gloss>
+<gloss xml:lang="hun">túloz</gloss>
+<gloss xml:lang="hun">kibővít</gloss>
+<gloss xml:lang="hun">kibővül</gloss>
+<gloss xml:lang="hun">kiszélesít</gloss>
+</sense>
+<sense>
+<gloss xml:lang="rus">1) стелить</gloss>
+<gloss xml:lang="rus">2) ((тж.) 伸べる) (см.) のばす</gloss>
+</sense>
+<sense>
+<gloss xml:lang="spa">extender</gloss>
+<gloss xml:lang="spa">prolongar</gloss>
+<gloss xml:lang="spa">alargar</gloss>
+</sense>
+</entry>
+<entry>
+<ent_seq>1177490</ent_seq>
+<k_ele>
+<keb>縁</keb>
+</k_ele>
+<k_ele>
+<keb>江に</keb>
+<ke_inf>ateji (phonetic) reading</ke_inf>
+</k_ele>
+<r_ele>
+<reb>えん</reb>
+<re_restr>縁</re_restr>
+</r_ele>
+<r_ele>
+<reb>えにし</reb>
+<re_restr>縁</re_restr>
+</r_ele>
+<r_ele>
+<reb>えに</reb>
+</r_ele>
+<r_ele>
+<reb>え</reb>
+<re_restr>縁</re_restr>
+</r_ele>
+<sense>
+<pos>noun (common) (futsuumeishi)</pos>
+<gloss>fate</gloss>
+<gloss>destiny (esp. as a mysterious force that binds two people together)</gloss>
+</sense>
+<sense>
+<gloss>relationship (e.g. between two people)</gloss>
+<gloss>bond</gloss>
+<gloss>link</gloss>
+<gloss>connection</gloss>
+</sense>
+<sense>
+<gloss>family ties</gloss>
+<gloss>affinity</gloss>
+</sense>
+<sense>
+<stagr>えん</stagr>
+<gloss>opportunity</gloss>
+<gloss>chance (to meet someone and start a relationship)</gloss>
+</sense>
+<sense>
+<stagr>えん</stagr>
+<xref>因・2</xref>
+<field>Buddhist term</field>
+<gloss>pratyaya (indirect conditions, as opposed to direct causes)</gloss>
+</sense>
+<sense>
+<stagr>えん</stagr>
+<s_inf>also written as 椽</s_inf>
+<gloss>narrow open-air veranda</gloss>
+</sense>
+<sense>
+<gloss xml:lang="dut">kans</gloss>
+<gloss xml:lang="dut">toevallige gebeurtenis</gloss>
+<gloss xml:lang="dut">lot</gloss>
+<gloss xml:lang="dut">toeval</gloss>
+<gloss xml:lang="dut">karma</gloss>
+</sense>
+<sense>
+<gloss xml:lang="dut">band</gloss>
+<gloss xml:lang="dut">betrekking</gloss>
+<gloss xml:lang="dut">relatie</gloss>
+<gloss xml:lang="dut">connectie</gloss>
+<gloss xml:lang="dut">verwantschap</gloss>
+</sense>
+<sense>
+<gloss xml:lang="dut">verband</gloss>
+<gloss xml:lang="dut">relatie</gloss>
+<gloss xml:lang="dut">connectie</gloss>
+<gloss xml:lang="dut">samenhang</gloss>
+</sense>
+<sense>
+<gloss xml:lang="dut">veranda</gloss>
+<gloss xml:lang="dut">waranda</gloss>
+<gloss xml:lang="dut">loggia</gloss>
+</sense>
+<sense>
+<gloss xml:lang="fre">connexion</gloss>
+<gloss xml:lang="fre">destin</gloss>
+<gloss xml:lang="fre">karma</gloss>
+<gloss xml:lang="fre">relation</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">(n) Chance</gloss>
+<gloss xml:lang="ger">(n) Schicksal</gloss>
+<gloss xml:lang="ger">(n) Karma</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">(f) Verwandtschaft</gloss>
+<gloss xml:lang="ger">(f) Blutsverwandtschaft</gloss>
+<gloss xml:lang="ger">(f) Affinität</gloss>
+<gloss xml:lang="ger">(f) Beziehung</gloss>
+<gloss xml:lang="ger">(f) Heirat</gloss>
+<gloss xml:lang="ger">(n) Verhältnis</gloss>
+<gloss xml:lang="ger">(f) Verbindung</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">(f) Schicksalsbeziehung zwischen Menschen</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">(n) Schicksal</gloss>
+<gloss xml:lang="ger">(n) Chance</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">(f) Verwandtschaft</gloss>
+<gloss xml:lang="ger">(f) Blutsverwandtschaft</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">(f) Bekanntschaft</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">(f) Beziehung</gloss>
+<gloss xml:lang="ger">(n) Verhältnis</gloss>
+<gloss xml:lang="ger">(f) Affinität</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">(f) Gelegenheit, eine Beziehung zu knüpfen</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">(n) Karma</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">überdachte (f) Veranda</gloss>
+<gloss xml:lang="ger">(n) Vordach</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">(m) Sparren</gloss>
+</sense>
+<sense>
+<gloss xml:lang="hun">előre nem látott</gloss>
+<gloss xml:lang="hun">eshetőség</gloss>
+<gloss xml:lang="hun">sors</gloss>
+<gloss xml:lang="hun">váratlan</gloss>
+<gloss xml:lang="hun">végzet</gloss>
+<gloss xml:lang="hun">véletlen</gloss>
+<gloss xml:lang="hun">elmúlás</gloss>
+<gloss xml:lang="hun">viszony</gloss>
+<gloss xml:lang="hun">rokonság</gloss>
+</sense>
+<sense>
+<gloss xml:lang="rus">(см.) えん【縁I】1</gloss>
+<gloss xml:lang="rus">1) связь (родственная, супружеская, любовная); отношения, знакомство</gloss>
+<gloss xml:lang="rus">2) судьба</gloss>
+<gloss xml:lang="rus">(см.) えんがわ</gloss>
+</sense>
+<sense>
+<gloss xml:lang="spa">suerte</gloss>
+<gloss xml:lang="spa">destino</gloss>
+<gloss xml:lang="spa">vinculo romántico predestinado</gloss>
+</sense>
+<sense>
+<gloss xml:lang="spa">relación (entre dos personas)</gloss>
+<gloss xml:lang="spa"> vinculo</gloss>
+<gloss xml:lang="spa">conexión personal</gloss>
+<gloss xml:lang="spa">karma</gloss>
+<gloss xml:lang="spa">afinidad</gloss>
+</sense>
+<sense>
+<gloss xml:lang="spa">relación (entre dos personas)</gloss>
+</sense>
+<sense>
+<gloss xml:lang="spa">lazo</gloss>
+<gloss xml:lang="spa">vinculo</gloss>
+<gloss xml:lang="spa">karma</gloss>
+<gloss xml:lang="spa">afinidad</gloss>
+<gloss xml:lang="spa">destino</gloss>
+<gloss xml:lang="spa">conexión</gloss>
+</sense>
+</entry>
+<entry>
 <ent_seq>2099350</ent_seq>
 <k_ele>
 <keb>仙台七夕まつり</keb>

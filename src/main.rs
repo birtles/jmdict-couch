@@ -42,6 +42,8 @@ struct Entry {
     kanji_entries: Vec<KanjiEntry>,
     /// r_ele children
     reading_entries: Vec<ReadingEntry>,
+    /// sense children
+    senses: Vec<Sense>,
 }
 
 /// k_ele from jmdict schema
@@ -69,6 +71,39 @@ struct ReadingEntry {
     /// re_pri
     priority: PriorityVec,
 }
+
+/// sense from jmdict schema
+#[derive(Debug)]
+struct Sense {
+    /// stagk
+    only_kanji: Vec<String>,
+    /// stagr
+    only_readings: Vec<String>,
+    // xref
+    // cross_refs: Vec<CrossReference>,
+    // ant
+    // XXX Are there ever more than one of these?
+    // antonyms: Vec<String>,
+    // pos
+    // XXX Need enum for this?
+    // info: PartOfSpeech,
+    // field
+    // XXX Use enum for this
+    // field: String,
+    // l_source
+    // lang_sources: Vec<LangSource>,
+    // dial
+    // dialect: Option<String>,
+    // gloss
+    // glosses: Vec<Gloss>,
+}
+
+/*
+struct CrossReference {
+    kanji_or_reading: String,
+    sense_index: Option<u8>,
+}
+*/
 
 fn main() {
     let opt = Opt::from_args();
@@ -123,6 +158,7 @@ fn parse_entry<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Entry, Err
     let mut id: u32 = 0;
     let mut kanji_entries: Vec<KanjiEntry> = Vec::new();
     let mut reading_entries: Vec<ReadingEntry> = Vec::new();
+    let mut senses: Vec<Sense> = Vec::new();
 
     let mut buf = Vec::new();
     let mut ent_seq = false;
@@ -130,8 +166,6 @@ fn parse_entry<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Entry, Err
     loop {
         match reader.read_event(&mut buf) {
             Ok(Event::Start(ref e)) => match e.name() {
-                b"k_ele" => kanji_entries.push(parse_k_ele(reader)?),
-                b"r_ele" => reading_entries.push(parse_r_ele(reader)?),
                 b"ent_seq" => {
                     ensure!(
                         !ent_seq,
@@ -140,8 +174,10 @@ fn parse_entry<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Entry, Err
                     );
                     ent_seq = true;
                 }
-                _ => (),
-                // _ => warn_unknown_tag(e.name(), reader.buffer_position(), "entry"),
+                b"k_ele" => kanji_entries.push(parse_k_ele(reader)?),
+                b"r_ele" => reading_entries.push(parse_r_ele(reader)?),
+                b"sense" => senses.push(parse_sense(reader)?),
+                _ => warn_unknown_tag(e.name(), reader.buffer_position(), "entry"),
             },
             Ok(Event::End(ref e)) => match e.name() {
                 b"entry" => break,
@@ -186,6 +222,7 @@ fn parse_entry<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Entry, Err
         id,
         kanji_entries,
         reading_entries,
+        senses,
     })
 }
 
@@ -310,6 +347,55 @@ fn parse_r_ele<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<ReadingEnt
         related_kanji,
         info,
         priority,
+    })
+}
+
+fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Error> {
+    let mut only_kanji: Vec<String> = Vec::new();
+    let mut only_readings: Vec<String> = Vec::new();
+
+    enum Elem {
+        SenseTagKanji,
+        SenseTagReading,
+    }
+    let mut elem: Option<Elem> = None;
+    let mut buf = Vec::new();
+
+    loop {
+        match reader.read_event(&mut buf) {
+            Ok(Event::Start(ref e)) => match e.name() {
+                b"stagk" => elem = Some(Elem::SenseTagKanji),
+                b"stagr" => elem = Some(Elem::SenseTagReading),
+                // _ => warn_unknown_tag(e.name(), reader.buffer_position(), "r_ele"),
+                _ => (),
+            },
+            Ok(Event::End(ref e)) => match e.name() {
+                b"sense" => break,
+                _ => elem = None,
+            },
+            Ok(Event::Text(e)) => match elem {
+                Some(Elem::SenseTagKanji) => {
+                    only_kanji.push(e.unescape_and_decode(&reader).unwrap())
+                }
+                Some(Elem::SenseTagReading) => {
+                    only_readings.push(e.unescape_and_decode(&reader).unwrap())
+                }
+                // _ => warn_unexpected_text(&e, reader, "r_ele"),
+                _ => (),
+            },
+            Err(e) => bail!(
+                "Error parsing entry at position #{}: {}",
+                reader.buffer_position(),
+                e
+            ),
+            _ => (),
+        }
+        buf.clear();
+    }
+
+    Ok(Sense {
+        only_kanji,
+        only_readings,
     })
 }
 
