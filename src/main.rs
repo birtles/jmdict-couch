@@ -6,9 +6,9 @@ extern crate smallvec;
 extern crate structopt;
 
 // TODO
+// -- All this could use tests
 // -- The factoring is awkward (really, pass the first tag then get function to pass the rest?)
 //    How is this supposed to work?
-// -- All this could use tests
 // -- Now that this is starting to come together, work out how better to factor out common code.
 //    Macros? Mako?
 
@@ -79,29 +79,41 @@ struct Sense {
     only_kanji: Vec<String>,
     /// stagr
     only_readings: Vec<String>,
-    // xref
+    // pos --- need to pass in reverse lookup for entities
+    // part_of_speech: Vec<String>,
+    // xref --- need to import pattern matching lib here (and tests)
     // cross_refs: Vec<CrossReference>,
-    // ant
-    // XXX Are there ever more than one of these?
-    // antonyms: Vec<String>,
-    // pos
-    // XXX Need enum for this?
-    // info: PartOfSpeech,
-    // field
-    // XXX Use enum for this
-    // field: String,
-    // l_source
+    // ant --- needs sample pattern matching
+    // antonyms: Option<CrossReference>,
+    // field -- need reverse lookup
+    // field: Option<String>,
+    // misc -- need reverse lookup
+    // misc: Option<String>,
+    // s_inf
+    // sense_info: Option<String>,
+    // lsource
     // lang_sources: Vec<LangSource>,
     // dial
     // dialect: Option<String>,
     // gloss
-    // glosses: Vec<Gloss>,
+    // glosses: Vec<String>,
+    // The language of this sense.
+    // In JMDict this is annotated onto each gloss, but all glosses for a given sense have the same
+    // language so we move this to the sense because it's more compact and allows us to create
+    // per-language views more easily.
+    // lang: Option<String>,
 }
 
 /*
 struct CrossReference {
     kanji_or_reading: String,
+    reading: Option<String>,
     sense_index: Option<u8>,
+}
+
+struct LangSource {
+    lang: String,
+    original: Option<String>,
 }
 */
 
