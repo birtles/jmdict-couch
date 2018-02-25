@@ -95,13 +95,14 @@ struct Sense {
     // lang_sources: Vec<LangSource>,
     // dial
     // dialect: Option<String>,
-    // gloss
-    // glosses: Vec<String>,
-    // The language of this sense.
-    // In JMDict this is annotated onto each gloss, but all glosses for a given sense have the same
-    // language so we move this to the sense because it's more compact and allows us to create
-    // per-language views more easily.
-    // lang: Option<String>,
+    /// gloss
+    glosses: Vec<String>,
+
+    /// The language of this sense.
+    /// In JMDict this is annotated onto each gloss, but all glosses for a given sense have the same
+    /// language so we move this to the sense because it's more compact and allows us to create
+    /// per-language views more easily.
+    lang: Option<String>,
 }
 
 /*
@@ -365,10 +366,13 @@ fn parse_r_ele<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<ReadingEnt
 fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Error> {
     let mut only_kanji: Vec<String> = Vec::new();
     let mut only_readings: Vec<String> = Vec::new();
+    let mut glosses: Vec<String> = Vec::new();
+    let mut lang: Option<String> = None;
 
     enum Elem {
         SenseTagKanji,
         SenseTagReading,
+        Gloss,
     }
     let mut elem: Option<Elem> = None;
     let mut buf = Vec::new();
@@ -378,6 +382,24 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
             Ok(Event::Start(ref e)) => match e.name() {
                 b"stagk" => elem = Some(Elem::SenseTagKanji),
                 b"stagr" => elem = Some(Elem::SenseTagReading),
+                b"gloss" => {
+                    elem = Some(Elem::Gloss);
+                    for a in e.attributes() {
+                        if let Ok(attr) = a {
+                            if attr.key == "xml:lang".as_bytes() {
+                                // XXX Do proper error handling here
+                                let lang_str = (str::from_utf8(&(attr.value))?).to_owned();
+                                match lang {
+                                    Some(ref current_lang_str) => {
+                                        ensure!(*current_lang_str == lang_str,
+                                                "All glosses within a sense should use the same language");
+                                    }
+                                    _ => lang = Some(lang_str),
+                                };
+                            }
+                        }
+                    }
+                }
                 // _ => warn_unknown_tag(e.name(), reader.buffer_position(), "r_ele"),
                 _ => (),
             },
@@ -392,6 +414,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
                 Some(Elem::SenseTagReading) => {
                     only_readings.push(e.unescape_and_decode(&reader).unwrap())
                 }
+                Some(Elem::Gloss) => glosses.push(e.unescape_and_decode(&reader).unwrap()),
                 // _ => warn_unexpected_text(&e, reader, "r_ele"),
                 _ => (),
             },
@@ -408,6 +431,8 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
     Ok(Sense {
         only_kanji,
         only_readings,
+        glosses,
+        lang,
     })
 }
 
