@@ -73,7 +73,7 @@ struct ReadingEntry {
 }
 
 /// sense from jmdict schema
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 struct Sense {
     /// stagk
     only_kanji: Vec<String>,
@@ -434,6 +434,28 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
         glosses,
         lang,
     })
+}
+
+#[test]
+fn test_parse_sense() {
+    let xml = r#"<sense>
+                 <stagk>延べる</stagk>
+                 <stagk>伸べる</stagk>
+                 <gloss>to postpone</gloss>
+                 <gloss>to extend</gloss>
+                 </sense>"#;
+    let mut reader = Reader::from_str(xml);
+    let mut buf = Vec::new();
+    let _ = reader.read_event(&mut buf);
+    assert_eq!(
+        parse_sense(&mut reader).unwrap(),
+        Sense {
+            only_kanji: vec!["延べる".to_owned(), "伸べる".to_owned()],
+            only_readings: vec![],
+            glosses: vec!["to postpone".to_owned(), "to extend".to_owned()],
+            lang: None,
+        }
+    );
 }
 
 fn warn_unknown_tag(elem_name: &[u8], buffer_position: usize, ancestor: &str) {
