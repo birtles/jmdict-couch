@@ -1,5 +1,6 @@
 #[macro_use]
 extern crate failure;
+extern crate memchr;
 extern crate quick_xml;
 extern crate smallvec;
 #[macro_use]
@@ -266,7 +267,7 @@ fn parse_k_ele<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<KanjiEntry
             },
             Ok(Event::Text(e)) => match elem {
                 Some(Elem::Keb) => kanji = e.unescape_and_decode(&reader)?,
-                Some(Elem::KeInf) => info.push(e.unescape_and_decode(&reader)?),
+                Some(Elem::KeInf) => info.push(parse_single_entity(e.escaped(), reader)?),
                 Some(Elem::KePri) => priority.push(e.unescape_and_decode(&reader)?),
                 _ => warn_unexpected_text(&e, reader, "k_ele"),
             },
@@ -456,6 +457,44 @@ fn test_parse_sense() {
             lang: None,
         }
     );
+}
+
+/// Take a string like "&ent;" and return "ent".
+//
+// What I'd really like to do here is have something like:
+//
+// ```ignore
+// trait ParseEntity<E>: E {
+//   fn parse(src: &str) -> Result<E>;
+// }
+//
+// enum KanjiInflection {
+//   ... have the contents and impl of ParseEntity produced by a mako template from a simple
+//       list of strings...
+// }
+//
+// pub fn parse_single_entity<E>(raw: &[u8]) -> Result<E, Error> where E: ParseEntity<E>
+// {
+//   ... throws when the value doesn't match
+// }
+//
+// Then we wouldn't need to decode at all and we could just pass integers around. But setting up the
+// build system to run mako is probably overkill for this.
+pub fn parse_single_entity<T: std::io::BufRead>(
+    raw: &[u8],
+    reader: &mut Reader<T>,
+) -> Result<String, Error> {
+    // Check we start with &, end with ;, and have nothing inbetween.
+    if !raw.starts_with(b"&") || !raw.ends_with(b";") || memchr::memchr(b'&', &raw[1..]).is_some()
+        || memchr::memchr(b';', &raw[..raw.len() - 1]).is_some()
+    {
+        bail!(
+            "Error parsing entity at position #{}",
+            reader.buffer_position(),
+        )
+    }
+
+    Ok(reader.decode(&raw[1..raw.len() - 1]).into_owned())
 }
 
 fn warn_unknown_tag(elem_name: &[u8], buffer_position: usize, ancestor: &str) {
