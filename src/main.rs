@@ -80,8 +80,8 @@ struct Sense {
     only_kanji: Vec<String>,
     /// stagr
     only_readings: Vec<String>,
-    // pos --- need to pass in reverse lookup for entities
-    // part_of_speech: Vec<String>,
+    /// pos
+    part_of_speech: Vec<String>,
     // xref --- need to import pattern matching lib here (and tests)
     // cross_refs: Vec<CrossReference>,
     // ant --- needs sample pattern matching
@@ -132,9 +132,12 @@ fn main() {
 
     let entries = entries.unwrap();
 
+    /*
     for entry in entries {
         println!("> {:?}", entry);
     }
+    */
+    println!("Parsed {} entries", entries.len());
 }
 
 fn get_entries(input: &PathBuf) -> Result<Vec<Entry>, Error> {
@@ -331,7 +334,7 @@ fn parse_r_ele<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<ReadingEnt
             Ok(Event::Text(e)) => match elem {
                 Some(Elem::Reb) => kana = e.unescape_and_decode(&reader).unwrap(),
                 Some(Elem::ReRestr) => related_kanji.push(e.unescape_and_decode(&reader).unwrap()),
-                Some(Elem::ReInf) => info.push(e.unescape_and_decode(&reader).unwrap()),
+                Some(Elem::ReInf) => info.push(parse_single_entity(e.escaped(), reader)?),
                 Some(Elem::RePri) => priority.push(e.unescape_and_decode(&reader).unwrap()),
                 _ => warn_unexpected_text(&e, reader, "r_ele"),
             },
@@ -367,12 +370,14 @@ fn parse_r_ele<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<ReadingEnt
 fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Error> {
     let mut only_kanji: Vec<String> = Vec::new();
     let mut only_readings: Vec<String> = Vec::new();
+    let mut part_of_speech: Vec<String> = Vec::new();
     let mut glosses: Vec<String> = Vec::new();
     let mut lang: Option<String> = None;
 
     enum Elem {
         SenseTagKanji,
         SenseTagReading,
+        PartOfSpeech,
         Gloss,
     }
     let mut elem: Option<Elem> = None;
@@ -383,6 +388,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
             Ok(Event::Start(ref e)) => match e.name() {
                 b"stagk" => elem = Some(Elem::SenseTagKanji),
                 b"stagr" => elem = Some(Elem::SenseTagReading),
+                b"pos" => elem = Some(Elem::PartOfSpeech),
                 b"gloss" => {
                     elem = Some(Elem::Gloss);
                     for a in e.attributes() {
@@ -415,6 +421,9 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
                 Some(Elem::SenseTagReading) => {
                     only_readings.push(e.unescape_and_decode(&reader).unwrap())
                 }
+                Some(Elem::PartOfSpeech) => {
+                    part_of_speech.push(parse_single_entity(e.escaped(), reader)?)
+                }
                 Some(Elem::Gloss) => glosses.push(e.unescape_and_decode(&reader).unwrap()),
                 // _ => warn_unexpected_text(&e, reader, "r_ele"),
                 _ => (),
@@ -432,6 +441,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
     Ok(Sense {
         only_kanji,
         only_readings,
+        part_of_speech,
         glosses,
         lang,
     })
