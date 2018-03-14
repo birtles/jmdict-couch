@@ -635,6 +635,233 @@ various information fields.
 </sense>
 </entry>
 <entry>
+<ent_seq>1004310</ent_seq>
+<k_ele>
+<keb>斯う</keb>
+<ke_pri>spec1</ke_pri>
+</k_ele>
+<r_ele>
+<reb>こう</reb>
+<re_pri>spec1</re_pri>
+</r_ele>
+<sense>
+<pos>&adv;</pos>
+<xref>然う・1</xref>
+<xref>ああ</xref>
+<xref>如何・どう</xref>
+<misc>&uk;</misc>
+<s_inf>used for something or someone close to the speaker, including the speaker himself, or for the opinions of the speaker</s_inf>
+<gloss>in this way</gloss>
+<gloss>thus</gloss>
+<gloss>such</gloss>
+</sense>
+<sense>
+<pos>&int;</pos>
+<misc>&uk;</misc>
+<s_inf>interjection used as a verbal pause</s_inf>
+<gloss>uh...</gloss>
+</sense>
+<sense>
+<gloss xml:lang="fre">comme ceci (utilisé pour quelque chose ou quelqu'un proche du locuteur, y compris lui-même, ou à propos de ses opinions)</gloss>
+<gloss xml:lang="fre">ainsi</gloss>
+<gloss xml:lang="fre">de cette façon</gloss>
+</sense>
+<sense>
+<gloss xml:lang="fre">euh... (interjection utilisée comme une pause verbale)</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">so</gloss>
+<gloss xml:lang="ger">auf diese Weise</gloss>
+<gloss xml:lang="ger">in dieser Weise</gloss>
+<gloss xml:lang="ger">wie dies</gloss>
+<gloss xml:lang="ger">wie folgt</gloss>
+</sense>
+<sense>
+<gloss xml:lang="hun">ilyen</gloss>
+<gloss xml:lang="hun">olyan</gloss>
+</sense>
+<sense>
+<gloss xml:lang="rus">: {～して} так, таким образом</gloss>
+<gloss xml:lang="rus">{～した} такой</gloss>
+</sense>
+<sense>
+<gloss xml:lang="spa">de esta manera</gloss>
+<gloss xml:lang="spa">así</gloss>
+<gloss xml:lang="spa">tal</gloss>
+</sense>
+<sense>
+<gloss xml:lang="spa">pausa verbal</gloss>
+</sense>
+</entry>
+<entry>
+<ent_seq>1004500</ent_seq>
+<k_ele>
+<keb>此方</keb>
+<ke_pri>ichi1</ke_pri>
+</k_ele>
+<r_ele>
+<reb>こちら</reb>
+<re_pri>ichi1</re_pri>
+</r_ele>
+<r_ele>
+<reb>こっち</reb>
+<re_pri>ichi1</re_pri>
+</r_ele>
+<r_ele>
+<reb>こち</reb>
+<re_inf>&ok;</re_inf>
+</r_ele>
+<sense>
+<pos>&n;</pos>
+<xref>何方・どちら・1</xref>
+<xref>其方・1</xref>
+<xref>彼方・あちら・1</xref>
+<misc>&uk;</misc>
+<gloss>this way (direction close to the speaker or towards the speaker)</gloss>
+<gloss>this direction</gloss>
+</sense>
+<sense>
+<gloss>here (place close to the speaker or where the speaker is)</gloss>
+</sense>
+<sense>
+<gloss>this one (something physically close to the speaker)</gloss>
+</sense>
+<sense>
+<pos>&pn;</pos>
+<pos>&adj-no;</pos>
+<gloss>I</gloss>
+<gloss>me</gloss>
+<gloss>we</gloss>
+<gloss>us</gloss>
+</sense>
+<sense>
+<gloss>this person (someone physically close to the speaker and of equal or higher status)</gloss>
+</sense>
+<sense>
+<gloss xml:lang="dut">hier</gloss>
+<gloss xml:lang="dut">deze plaats</gloss>
+</sense>
+<sense>
+<gloss xml:lang="dut">hierheen</gloss>
+<gloss xml:lang="dut">hiernaartoe</gloss>
+<gloss xml:lang="dut">naar deze plaats</gloss>
+</sense>
+<sense>
+<gloss xml:lang="dut">deze zijde</gloss>
+<gloss xml:lang="dut">deze kant</gloss>
+</sense>
+<sense>
+<gloss xml:lang="dut">deze persoon</gloss>
+<gloss xml:lang="dut">deze heer</gloss>
+<gloss xml:lang="dut">deze dame</gloss>
+<gloss xml:lang="dut">deze jongeheer</gloss>
+<gloss xml:lang="dut">deze jongedame</gloss>
+</sense>
+<sense>
+<gloss xml:lang="dut">deze zaak</gloss>
+<gloss xml:lang="dut">dit voorwerp</gloss>
+</sense>
+<sense>
+<gloss xml:lang="dut">wij</gloss>
+<gloss xml:lang="dut">ik</gloss>
+<gloss xml:lang="dut">onze kant</gloss>
+<gloss xml:lang="dut">mijn kant</gloss>
+<gloss xml:lang="dut">de groep waartoe wij behoren</gloss>
+<gloss xml:lang="dut">de groep waartoe ik behoor</gloss>
+<gloss xml:lang="dut">de betrokken partij waartoe wij behoren</gloss>
+<gloss xml:lang="dut">de betrokken partij waartoe ik behoor</gloss>
+</sense>
+<sense>
+<gloss xml:lang="dut">u</gloss>
+<gloss xml:lang="dut">ge</gloss>
+<gloss xml:lang="dut">gij</gloss>
+</sense>
+<sense>
+<gloss xml:lang="dut">uw huis</gloss>
+<gloss xml:lang="dut">uw woning</gloss>
+</sense>
+<sense>
+<gloss xml:lang="dut">hier</gloss>
+<gloss xml:lang="dut">deze plaats</gloss>
+</sense>
+<sense>
+<gloss xml:lang="dut">deze zijde</gloss>
+<gloss xml:lang="dut">deze kant</gloss>
+</sense>
+<sense>
+<gloss xml:lang="dut">wij</gloss>
+<gloss xml:lang="dut">ik</gloss>
+<gloss xml:lang="dut">onze kant</gloss>
+<gloss xml:lang="dut">mijn kant</gloss>
+<gloss xml:lang="dut">de groep waartoe wij behoren</gloss>
+<gloss xml:lang="dut">de groep waartoe ik behoor</gloss>
+</sense>
+<sense>
+<gloss xml:lang="fre">par ici (direction proche du locuteur ou vers lui)</gloss>
+<gloss xml:lang="fre">cette direction</gloss>
+</sense>
+<sense>
+<gloss xml:lang="fre">ici (endroit où le locuteur se trouve, ou proche de lui)</gloss>
+</sense>
+<sense>
+<gloss xml:lang="fre">celui-ci (quelque chose de physiquement proche de l'orateur)</gloss>
+</sense>
+<sense>
+<gloss xml:lang="fre">je</gloss>
+<gloss xml:lang="fre">moi</gloss>
+<gloss xml:lang="fre">nous</gloss>
+</sense>
+<sense>
+<gloss xml:lang="fre">cette personne (quelqu'un physiquement proche de l'orateur et d'un statut égal ou supérieur)</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">diese (f) Richtung</gloss>
+<gloss xml:lang="ger">dieser (m) Weg</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">dieser (m) Ort</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">diese (f) Person</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">dies hier</gloss>
+</sense>
+<sense>
+<gloss xml:lang="ger">ich</gloss>
+<gloss xml:lang="ger">wir</gloss>
+</sense>
+<sense>
+<gloss xml:lang="hun">azután</gloss>
+</sense>
+<sense>
+<gloss xml:lang="rus">(см.) こちら</gloss>
+<gloss xml:lang="rus">1) здесь; эта сторона</gloss>
+<gloss xml:lang="rus">{～へ} сюда</gloss>
+<gloss xml:lang="rus">{～から} отсюда</gloss>
+<gloss xml:lang="rus">2) я, мы</gloss>
+<gloss xml:lang="rus">3): こちらさん вы</gloss>
+<gloss xml:lang="rus">1) (см.) こちら</gloss>
+<gloss xml:lang="rus">2) со времени</gloss>
+</sense>
+<sense>
+<gloss xml:lang="spa">por aquí</gloss>
+<gloss xml:lang="spa">(en) esta dirección</gloss>
+</sense>
+<sense>
+<gloss xml:lang="spa">aquí</gloss>
+</sense>
+<sense>
+<gloss xml:lang="spa">este</gloss>
+</sense>
+<sense>
+<gloss xml:lang="spa">yo</gloss>
+</sense>
+<sense>
+<gloss xml:lang="spa">esta persona</gloss>
+</sense>
+</entry>
+<entry>
 <ent_seq>1330510</ent_seq>
 <k_ele>
 <keb>収穫</keb>

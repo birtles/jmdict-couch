@@ -1,7 +1,10 @@
 #[macro_use]
 extern crate failure;
+#[macro_use]
+extern crate lazy_static;
 extern crate memchr;
 extern crate quick_xml;
+extern crate regex;
 extern crate smallvec;
 #[macro_use]
 extern crate structopt;
@@ -14,6 +17,7 @@ extern crate structopt;
 //    Macros? Mako?
 
 use failure::{Error, ResultExt};
+use regex::Regex;
 use smallvec::SmallVec;
 use std::path::PathBuf;
 use std::str;
@@ -82,8 +86,8 @@ struct Sense {
     only_readings: Vec<String>,
     /// pos
     part_of_speech: Vec<String>,
-    // xref --- need to import pattern matching lib here (and tests)
-    // cross_refs: Vec<CrossReference>,
+    /// xref
+    cross_refs: Vec<CrossReference>,
     // ant --- needs sample pattern matching
     // antonyms: Option<CrossReference>,
     // field -- need reverse lookup
@@ -106,13 +110,14 @@ struct Sense {
     lang: Option<String>,
 }
 
-/*
+#[derive(Debug, PartialEq)]
 struct CrossReference {
     kanji_or_reading: String,
     reading: Option<String>,
     sense_index: Option<u8>,
 }
 
+/*
 struct LangSource {
     lang: String,
     original: Option<String>,
@@ -371,6 +376,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
     let mut only_kanji: Vec<String> = Vec::new();
     let mut only_readings: Vec<String> = Vec::new();
     let mut part_of_speech: Vec<String> = Vec::new();
+    let mut cross_refs: Vec<CrossReference> = Vec::new();
     let mut glosses: Vec<String> = Vec::new();
     let mut lang: Option<String> = None;
 
@@ -378,6 +384,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
         SenseTagKanji,
         SenseTagReading,
         PartOfSpeech,
+        CrossReference,
         Gloss,
     }
     let mut elem: Option<Elem> = None;
@@ -389,6 +396,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
                 b"stagk" => elem = Some(Elem::SenseTagKanji),
                 b"stagr" => elem = Some(Elem::SenseTagReading),
                 b"pos" => elem = Some(Elem::PartOfSpeech),
+                b"xref" => elem = Some(Elem::CrossReference),
                 b"gloss" => {
                     elem = Some(Elem::Gloss);
                     for a in e.attributes() {
@@ -424,6 +432,10 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
                 Some(Elem::PartOfSpeech) => {
                     part_of_speech.push(parse_single_entity(e.escaped(), reader)?)
                 }
+                Some(Elem::CrossReference) => cross_refs.push(parse_cross_ref(
+                    &e.unescape_and_decode(&reader).unwrap(),
+                    reader.buffer_position(),
+                )?),
                 Some(Elem::Gloss) => glosses.push(e.unescape_and_decode(&reader).unwrap()),
                 // _ => warn_unexpected_text(&e, reader, "r_ele"),
                 _ => (),
@@ -442,6 +454,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
         only_kanji,
         only_readings,
         part_of_speech,
+        cross_refs,
         glosses,
         lang,
     })
@@ -490,7 +503,7 @@ fn test_parse_sense() {
 //
 // Then we wouldn't need to decode at all and we could just pass integers around. But setting up the
 // build system to run mako is probably overkill for this.
-pub fn parse_single_entity<T: std::io::BufRead>(
+fn parse_single_entity<T: std::io::BufRead>(
     raw: &[u8],
     reader: &mut Reader<T>,
 ) -> Result<String, Error> {
@@ -505,6 +518,32 @@ pub fn parse_single_entity<T: std::io::BufRead>(
     }
 
     Ok(reader.decode(&raw[1..raw.len() - 1]).into_owned())
+}
+
+fn parse_cross_ref(input: &str, buffer_position: usize) -> Result<CrossReference, Error> {
+    lazy_static! {
+        static ref CROSS_REF_REGEX: Regex =
+            Regex::new(r"^([^・]+)(・([^・]+))?(・(\d+))?$")
+                .expect("Error parsing cross-reference regex");
+    }
+
+    match CROSS_REF_REGEX.captures(input) {
+        Some(captures) => {
+            let kanji_or_reading = (&captures[1]).to_owned();
+            let reading = captures.get(3).map(|r| r.as_str().to_owned());
+            let sense_index = captures.get(5).map(|s| u8::from_str(s.as_str()).unwrap());
+            Ok(CrossReference {
+                kanji_or_reading,
+                reading,
+                sense_index,
+            })
+        }
+        _ => bail!(
+            "Error parsing cross reference at position #{}: {}",
+            buffer_position,
+            input,
+        ),
+    }
 }
 
 fn warn_unknown_tag(elem_name: &[u8], buffer_position: usize, ancestor: &str) {
