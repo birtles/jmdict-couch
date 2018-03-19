@@ -85,7 +85,7 @@ struct Sense {
     /// xref
     cross_refs: Vec<CrossReference>,
     /// ant
-    antonym: Option<CrossReference>,
+    antonyms: Vec<CrossReference>,
     // field -- entity
     // field: Option<String>,
     // misc -- entity
@@ -373,7 +373,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
     let mut only_readings: Vec<String> = Vec::new();
     let mut part_of_speech: Vec<String> = Vec::new();
     let mut cross_refs: Vec<CrossReference> = Vec::new();
-    let mut antonym: Option<CrossReference> = None;
+    let mut antonyms: Vec<CrossReference> = Vec::new();
     let mut glosses: Vec<String> = Vec::new();
     let mut lang: Option<String> = None;
 
@@ -435,18 +435,10 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
                     &e.unescape_and_decode(&reader).unwrap(),
                     reader.buffer_position(),
                 )?),
-                Some(Elem::Antonym) => {
-                    if antonym.is_some() {
-                        bail!(
-                            "Got multiple antonyms at position #{}",
-                            reader.buffer_position()
-                        );
-                    }
-                    antonym = Some(parse_cross_ref(
-                        &e.unescape_and_decode(&reader).unwrap(),
-                        reader.buffer_position(),
-                    )?)
-                }
+                Some(Elem::Antonym) => antonyms.push(parse_cross_ref(
+                    &e.unescape_and_decode(&reader).unwrap(),
+                    reader.buffer_position(),
+                )?),
                 Some(Elem::Gloss) => glosses.push(e.unescape_and_decode(&reader).unwrap()),
                 // _ => warn_unexpected_text(&e, reader, "r_ele"),
                 _ => (),
@@ -466,7 +458,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
         only_readings,
         part_of_speech,
         cross_refs,
-        antonym,
+        antonyms,
         glosses,
         lang,
     })
@@ -488,7 +480,7 @@ fn test_parse_sense() {
         Sense {
             only_kanji: vec!["延べる".to_owned(), "伸べる".to_owned()],
             only_readings: vec![],
-            antonym: None,
+            antonyms: vec![],
             part_of_speech: vec![],
             cross_refs: vec![],
             glosses: vec!["to postpone".to_owned(), "to extend".to_owned()],
@@ -556,7 +548,11 @@ fn parse_cross_ref(input: &str, buffer_position: usize) -> Result<CrossReference
 
     // If the last part is an integer, assign the sense.
     let sense_index: Option<u8> = parts.last().unwrap().parse::<u8>().ok();
-    let non_sense_parts = if sense_index.is_some() { parts.len() - 1 } else { parts.len() };
+    let non_sense_parts = if sense_index.is_some() {
+        parts.len() - 1
+    } else {
+        parts.len()
+    };
 
     // Assign the other parts depending on if we're likely looking at a katakana word or a regular
     // entry.
