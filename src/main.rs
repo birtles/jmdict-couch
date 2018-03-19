@@ -1,10 +1,7 @@
 #[macro_use]
 extern crate failure;
-#[macro_use]
-extern crate lazy_static;
 extern crate memchr;
 extern crate quick_xml;
-extern crate regex;
 extern crate smallvec;
 #[macro_use]
 extern crate structopt;
@@ -17,7 +14,6 @@ extern crate structopt;
 //    Macros? Mako?
 
 use failure::{Error, ResultExt};
-use regex::Regex;
 use smallvec::SmallVec;
 use std::path::PathBuf;
 use std::str;
@@ -492,6 +488,9 @@ fn test_parse_sense() {
         Sense {
             only_kanji: vec!["延べる".to_owned(), "伸べる".to_owned()],
             only_readings: vec![],
+            antonym: None,
+            part_of_speech: vec![],
+            cross_refs: vec![],
             glosses: vec!["to postpone".to_owned(), "to extend".to_owned()],
             lang: None,
         }
@@ -537,29 +536,118 @@ fn parse_single_entity<T: std::io::BufRead>(
 }
 
 fn parse_cross_ref(input: &str, buffer_position: usize) -> Result<CrossReference, Error> {
-    lazy_static! {
-        static ref CROSS_REF_REGEX: Regex =
-            Regex::new(r"^([^・]+)(・([^・]+))?(・(\d+))?$")
-                .expect("Error parsing cross-reference regex");
+    if input.is_empty() {
+        bail!("Empty cross-reference at position #{}", buffer_position);
     }
 
-    match CROSS_REF_REGEX.captures(input) {
-        Some(captures) => {
-            let kanji_or_reading = (&captures[1]).to_owned();
-            let reading = captures.get(3).map(|r| r.as_str().to_owned());
-            let sense_index = captures.get(5).map(|s| u8::from_str(s.as_str()).unwrap());
-            Ok(CrossReference {
-                kanji_or_reading,
-                reading,
-                sense_index,
-            })
-        }
-        _ => bail!(
-            "Error parsing cross reference at position #{}: {}",
-            buffer_position,
-            input,
-        ),
+    let parts: Vec<&str> = input.split('・').collect();
+
+    // Simple case, no separators
+    if parts.len() == 1 {
+        return Ok(CrossReference {
+            kanji_or_reading: input.to_owned(),
+            reading: None,
+            sense_index: None,
+        });
     }
+
+    // The middle dot can either be the separator of the kanji / reading / sense OR it can just be
+    // the regular separator in a katakana word.
+
+    // If the last part is an integer, assign the sense.
+    let sense_index: Option<u8> = parts.last().unwrap().parse::<u8>().ok();
+    let non_sense_parts = if sense_index.is_some() { parts.len() - 1 } else { parts.len() };
+
+    // Assign the other parts depending on if we're likely looking at a katakana word or a regular
+    // entry.
+    let mut reading: Option<String> = None;
+    let kanji_or_reading = if is_katakana(parts.first().unwrap()) {
+        parts[0..non_sense_parts].join("・").to_owned()
+    } else {
+        if non_sense_parts > 2 {
+            bail!(
+                "Error parsing cross-reference at position #{}: {}",
+                buffer_position,
+                input,
+            );
+        }
+        // Assign the reading if we have one
+        if non_sense_parts == 2 {
+            reading = Some(parts[1].to_owned());
+        }
+        (*parts.first().unwrap()).to_owned()
+    };
+
+    Ok(CrossReference {
+        kanji_or_reading,
+        reading,
+        sense_index,
+    })
+}
+
+#[test]
+fn test_parse_cross_ref() {
+    assert_eq!(
+        parse_cross_ref("集束", 0).unwrap(),
+        CrossReference {
+            kanji_or_reading: "集束".to_owned(),
+            reading: None,
+            sense_index: None,
+        }
+    );
+    assert_eq!(
+        parse_cross_ref("因・2", 0).unwrap(),
+        CrossReference {
+            kanji_or_reading: "因".to_owned(),
+            reading: None,
+            sense_index: Some(2),
+        }
+    );
+    assert_eq!(
+        parse_cross_ref("如何・どう", 0).unwrap(),
+        CrossReference {
+            kanji_or_reading: "如何".to_owned(),
+            reading: Some("どう".to_owned()),
+            sense_index: None,
+        }
+    );
+    assert_eq!(
+        parse_cross_ref("何方・どちら・1", 0).unwrap(),
+        CrossReference {
+            kanji_or_reading: "何方".to_owned(),
+            reading: Some("どちら".to_owned()),
+            sense_index: Some(1),
+        }
+    );
+    assert_eq!(
+        parse_cross_ref("ブロードノーズ・セブンギル・シャーク", 0).unwrap(),
+        CrossReference {
+            kanji_or_reading: "ブロードノーズ・セブンギル・シャーク".to_owned(),
+            reading: None,
+            sense_index: None,
+        }
+    );
+    // I'm not sure if this actually exists, but it seems possible.
+    assert_eq!(
+        parse_cross_ref("カタカナ・コトバ・2", 0).unwrap(),
+        CrossReference {
+            kanji_or_reading: "カタカナ・コトバ".to_owned(),
+            reading: None,
+            sense_index: Some(2),
+        }
+    );
+}
+
+fn is_katakana(word: &str) -> bool {
+    word.chars().all(|c| c >= '\u{30a0}' && c <= '\u{30ff}')
+}
+
+#[test]
+fn test_is_katakana() {
+    assert_eq!(is_katakana("トマト"), true);
+    assert_eq!(is_katakana("トマト・パスト"), true);
+    assert_eq!(is_katakana("ﾄﾏﾄ"), false);
+    assert_eq!(is_katakana("とまと"), false);
 }
 
 fn warn_unknown_tag(elem_name: &[u8], buffer_position: usize, ancestor: &str) {
