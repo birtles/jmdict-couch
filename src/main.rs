@@ -88,11 +88,11 @@ struct Sense {
     part_of_speech: Vec<String>,
     /// xref
     cross_refs: Vec<CrossReference>,
-    // ant --- needs sample pattern matching
-    // antonyms: Option<CrossReference>,
-    // field -- need reverse lookup
+    /// ant
+    antonym: Option<CrossReference>,
+    // field -- entity
     // field: Option<String>,
-    // misc -- need reverse lookup
+    // misc -- entity
     // misc: Option<String>,
     // s_inf
     // sense_info: Option<String>,
@@ -377,6 +377,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
     let mut only_readings: Vec<String> = Vec::new();
     let mut part_of_speech: Vec<String> = Vec::new();
     let mut cross_refs: Vec<CrossReference> = Vec::new();
+    let mut antonym: Option<CrossReference> = None;
     let mut glosses: Vec<String> = Vec::new();
     let mut lang: Option<String> = None;
 
@@ -385,6 +386,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
         SenseTagReading,
         PartOfSpeech,
         CrossReference,
+        Antonym,
         Gloss,
     }
     let mut elem: Option<Elem> = None;
@@ -397,6 +399,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
                 b"stagr" => elem = Some(Elem::SenseTagReading),
                 b"pos" => elem = Some(Elem::PartOfSpeech),
                 b"xref" => elem = Some(Elem::CrossReference),
+                b"ant" => elem = Some(Elem::Antonym),
                 b"gloss" => {
                     elem = Some(Elem::Gloss);
                     for a in e.attributes() {
@@ -415,7 +418,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
                         }
                     }
                 }
-                // _ => warn_unknown_tag(e.name(), reader.buffer_position(), "r_ele"),
+                // _ => warn_unknown_tag(e.name(), reader.buffer_position(), "sense"),
                 _ => (),
             },
             Ok(Event::End(ref e)) => match e.name() {
@@ -436,6 +439,18 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
                     &e.unescape_and_decode(&reader).unwrap(),
                     reader.buffer_position(),
                 )?),
+                Some(Elem::Antonym) => {
+                    if antonym.is_some() {
+                        bail!(
+                            "Got multiple antonyms at position #{}",
+                            reader.buffer_position()
+                        );
+                    }
+                    antonym = Some(parse_cross_ref(
+                        &e.unescape_and_decode(&reader).unwrap(),
+                        reader.buffer_position(),
+                    )?)
+                }
                 Some(Elem::Gloss) => glosses.push(e.unescape_and_decode(&reader).unwrap()),
                 // _ => warn_unexpected_text(&e, reader, "r_ele"),
                 _ => (),
@@ -455,6 +470,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
         only_readings,
         part_of_speech,
         cross_refs,
+        antonym,
         glosses,
         lang,
     })
