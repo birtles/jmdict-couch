@@ -81,8 +81,8 @@ struct Sense {
     antonyms: Vec<CrossReference>,
     /// field
     field: Vec<String>,
-    // misc -- entity
-    // misc: Option<String>,
+    /// misc
+    misc: Vec<String>,
     // s_inf
     // sense_info: Option<String>,
     // lsource
@@ -368,6 +368,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
     let mut cross_refs: Vec<CrossReference> = Vec::new();
     let mut antonyms: Vec<CrossReference> = Vec::new();
     let mut field: Vec<String> = Vec::new();
+    let mut misc: Vec<String> = Vec::new();
     let mut glosses: Vec<String> = Vec::new();
     let mut lang: Option<String> = None;
 
@@ -378,6 +379,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
         CrossReference,
         Antonym,
         Field,
+        Misc,
         Gloss,
     }
     let mut elem: Option<Elem> = None;
@@ -392,6 +394,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
                 b"xref" => elem = Some(Elem::CrossReference),
                 b"ant" => elem = Some(Elem::Antonym),
                 b"field" => elem = Some(Elem::Field),
+                b"misc" => elem = Some(Elem::Misc),
                 b"gloss" => {
                     elem = Some(Elem::Gloss);
                     for a in e.attributes() {
@@ -438,6 +441,9 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
                 Some(Elem::Field) => {
                     field.push(parse_single_entity(e.escaped(), reader)?)
                 }
+                Some(Elem::Misc) => {
+                    misc.push(parse_single_entity(e.escaped(), reader)?)
+                }
                 Some(Elem::Gloss) => glosses.push(e.unescape_and_decode(&reader).unwrap()),
                 // _ => warn_unexpected_text(&e, reader, "r_ele"),
                 _ => (),
@@ -459,6 +465,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
         cross_refs,
         antonyms,
         field,
+        misc,
         glosses,
         lang,
     })
