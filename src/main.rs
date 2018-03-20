@@ -6,13 +6,6 @@ extern crate smallvec;
 #[macro_use]
 extern crate structopt;
 
-// TODO
-// -- All this could use tests
-// -- The factoring is awkward (really, pass the first tag then get function to pass the rest?)
-//    How is this supposed to work?
-// -- Now that this is starting to come together, work out how better to factor out common code.
-//    Macros? Mako?
-
 use failure::{Error, ResultExt};
 use smallvec::SmallVec;
 use std::path::PathBuf;
@@ -86,8 +79,8 @@ struct Sense {
     cross_refs: Vec<CrossReference>,
     /// ant
     antonyms: Vec<CrossReference>,
-    // field -- entity
-    // field: Option<String>,
+    /// field
+    field: Vec<String>,
     // misc -- entity
     // misc: Option<String>,
     // s_inf
@@ -374,6 +367,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
     let mut part_of_speech: Vec<String> = Vec::new();
     let mut cross_refs: Vec<CrossReference> = Vec::new();
     let mut antonyms: Vec<CrossReference> = Vec::new();
+    let mut field: Vec<String> = Vec::new();
     let mut glosses: Vec<String> = Vec::new();
     let mut lang: Option<String> = None;
 
@@ -383,6 +377,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
         PartOfSpeech,
         CrossReference,
         Antonym,
+        Field,
         Gloss,
     }
     let mut elem: Option<Elem> = None;
@@ -396,6 +391,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
                 b"pos" => elem = Some(Elem::PartOfSpeech),
                 b"xref" => elem = Some(Elem::CrossReference),
                 b"ant" => elem = Some(Elem::Antonym),
+                b"field" => elem = Some(Elem::Field),
                 b"gloss" => {
                     elem = Some(Elem::Gloss);
                     for a in e.attributes() {
@@ -439,6 +435,9 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
                     &e.unescape_and_decode(&reader).unwrap(),
                     reader.buffer_position(),
                 )?),
+                Some(Elem::Field) => {
+                    field.push(parse_single_entity(e.escaped(), reader)?)
+                }
                 Some(Elem::Gloss) => glosses.push(e.unescape_and_decode(&reader).unwrap()),
                 // _ => warn_unexpected_text(&e, reader, "r_ele"),
                 _ => (),
@@ -459,6 +458,7 @@ fn parse_sense<T: std::io::BufRead>(reader: &mut Reader<T>) -> Result<Sense, Err
         part_of_speech,
         cross_refs,
         antonyms,
+        field,
         glosses,
         lang,
     })
